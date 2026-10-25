@@ -1075,9 +1075,23 @@ class QualityScoreCalculator:
 
 
 class DataQualityAnalyzer:
-    def __init__(self, file_path: Union[str, Path], sheet_name: Optional[Union[str, int]] = None,
-                 config: Optional[dict] = None):
-        self.file_path = str(file_path)
+    def __init__(self, data: Union[str, Path, pd.DataFrame], sheet_name: Optional[Union[str, int]] = None,
+                 config: Optional[dict] = None, source_name: Optional[str] = None):
+        """
+        `data` can be either:
+          - a file path (str / Path) to a CSV / Excel / JSON / Parquet / TSV file, or
+          - an already-loaded pandas DataFrame.
+
+        `source_name` is only used (optionally) when `data` is a DataFrame, to label
+        the report and to name the HTML output file. If omitted, "dataframe" is used.
+        """
+        self._input_dataframe: Optional[pd.DataFrame] = data if isinstance(data, pd.DataFrame) else None
+
+        if self._input_dataframe is not None:
+            self.file_path = str(source_name or "dataframe")
+        else:
+            self.file_path = str(data)
+
         self.sheet_name = sheet_name
         self.config = {**DEFAULT_CONFIG, **(config or {})}
 
@@ -1142,31 +1156,43 @@ class DataQualityAnalyzer:
             return False
 
     def _load(self) -> bool:
-        self.load_result = DatasetLoader.load(self.file_path, self.sheet_name)
-        if not self.load_result.success:
-            self._print_error(self.load_result.error_message)
-            return False
+        if self._input_dataframe is not None:
+            self.df = self._input_dataframe
+            self.load_result = LoadResult(
+                success=True, dataframe=self.df, file_path=self.file_path, file_format="dataframe",
+            )
+        else:
+            self.load_result = DatasetLoader.load(self.file_path, self.sheet_name)
+            if not self.load_result.success:
+                self._print_error(self.load_result.error_message)
+                return False
+            self.df = self.load_result.dataframe
 
-        self.df = self.load_result.dataframe
+            for w in self.load_result.load_warnings:
+                self._print_warning(w)
 
         if self.df is None or self.df.shape[0] == 0:
-            self._print_error("File was loaded but contains no data rows.")
+            self._print_error("Data was loaded but contains no data rows.")
             return False
         if self.df.shape[1] == 0:
-            self._print_error("File was loaded but contains no columns.")
+            self._print_error("Data was loaded but contains no columns.")
             return False
-
-        for w in self.load_result.load_warnings:
-            self._print_warning(w)
 
         return True
 
     def _default_html_path(self) -> str:
-        input_path = Path(self.file_path).resolve()
-        target_dir = input_path.parent / "Report"
+        if self._input_dataframe is not None:
+            # No real file on disk (DataFrame passed directly) -> anchor Report/ to the
+            # current working directory, and use source_name (or "dataframe") as the stem.
+            target_dir = Path.cwd() / "Report"
+            stem = re.sub(r"[^A-Za-z0-9_\-]+", "_", self.file_path) or "dataframe"
+        else:
+            input_path = Path(self.file_path).resolve()
+            target_dir = input_path.parent / "Report"
+            stem = input_path.stem
+
         target_dir.mkdir(parents=True, exist_ok=True)
 
-        stem = input_path.stem
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"data_quality_report_{stem}_{timestamp}.html"
 
