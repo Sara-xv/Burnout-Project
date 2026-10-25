@@ -1171,11 +1171,11 @@ class DataQualityAnalyzer:
 
     def _default_html_path(self) -> str:
         input_path = Path(self.file_path).resolve()
-        target_dir = input_path.parent
+        report_dir = input_path.parent / "Report"
         stem = input_path.stem
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"data_quality_report_{stem}_{timestamp}.html"
-        return str(target_dir / filename)
+        return str(report_dir / filename)
 
     def _print_status(self, msg: str) -> None:
         if self.console:
@@ -1422,7 +1422,9 @@ class DataQualityAnalyzer:
             with open(target_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
 
-            self._print_status(f"✅ HTML report saved to the full path below:\n  {target_path}")
+            self._print_status(
+                f"✅ گزارش استخراج شد و در فولدر Report ذخیره شد:\n  {target_path}"
+            )
             return target_path
         except Exception as exc:
             self._print_error(f"Error generating/saving the HTML report: {exc}")
