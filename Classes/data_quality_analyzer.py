@@ -1096,33 +1096,26 @@ class DataQualityAnalyzer:
         self.analysis_timestamp: Optional[str] = None
         self._analysis_complete = False
 
-    def run(self, show_report: bool = True, export_html: bool = True,
+    def run(self, show_report: bool = False, export_html: bool = True,
             html_output_path: Optional[str] = None) -> bool:
         try:
             if not self._load():
                 return False
 
-            self._print_status("Profiling dataset...")
             self.profile = DatasetProfiler(self.df, self.config).profile()
 
-            self._print_status("Detecting missing values...")
             self.missing_result = MissingValueDetector(self.config).detect(self.df)
 
-            self._print_status("Detecting duplicates...")
             self.duplicate_result = DuplicateDetector(self.config).detect(
                 self.df, identifier_columns=self.profile["identifier_columns"]
             )
 
-            self._print_status("Detecting outliers...")
             self.outlier_result = OutlierDetector(self.config).detect(self.df, self.profile["column_profiles"])
 
-            self._print_status("Detecting invalid values...")
             self.invalid_result = InvalidValueDetector(self.config).detect(self.df, self.profile["column_profiles"])
 
-            self._print_status("Detecting inconsistencies...")
             self.inconsistency_result = InconsistencyDetector(self.config).detect(self.df, self.profile["column_profiles"])
 
-            self._print_status("Checking data type issues...")
             self.datatype_result = DataTypeIssueDetector(self.config).detect(self.df, self.profile["column_profiles"])
 
             self.quality_score = QualityScoreCalculator().calculate(
@@ -1149,7 +1142,6 @@ class DataQualityAnalyzer:
             return False
 
     def _load(self) -> bool:
-        self._print_status(f"Loading file: {self.file_path}")
         self.load_result = DatasetLoader.load(self.file_path, self.sheet_name)
         if not self.load_result.success:
             self._print_error(self.load_result.error_message)
@@ -1171,11 +1163,14 @@ class DataQualityAnalyzer:
 
     def _default_html_path(self) -> str:
         input_path = Path(self.file_path).resolve()
-        report_dir = input_path.parent / "Report"
+        target_dir = input_path.parent / "Report"
+        target_dir.mkdir(parents=True, exist_ok=True)
+
         stem = input_path.stem
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"data_quality_report_{stem}_{timestamp}.html"
-        return str(report_dir / filename)
+
+        return str(target_dir / filename)
 
     def _print_status(self, msg: str) -> None:
         if self.console:
@@ -1422,9 +1417,7 @@ class DataQualityAnalyzer:
             with open(target_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
 
-            self._print_status(
-                f"✅ گزارش استخراج شد و در فولدر Report ذخیره شد:\n  {target_path}"
-            )
+            self._print_status(f"✅ گزارش HTML ایجاد شد: {target_path}")
             return target_path
         except Exception as exc:
             self._print_error(f"Error generating/saving the HTML report: {exc}")
@@ -2258,5 +2251,5 @@ if __name__ == "__main__":
     _file = sys.argv[1]
     _sheet = sys.argv[2] if len(sys.argv) > 2 else None
     analyzer = DataQualityAnalyzer(_file, sheet_name=_sheet)
-    success = analyzer.run(show_report=True, export_html=True)
+    success = analyzer.run(show_report=False, export_html=True)
     sys.exit(0 if success else 1)
