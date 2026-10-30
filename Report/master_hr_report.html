@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HR Burnout Risk Analysis — Master Report</title>
+<style>
+
+body {
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.report-header {
+    text-align: center;
+    padding: 50px 20px 30px 20px;
+    border-bottom: 2px solid #333F6E;
+    margin-bottom: 10px;
+}
+
+.report-header h1 {
+    color: #A1E197;
+    font-size: 2.2em;
+    margin-bottom: 8px;
+}
+
+.report-header p {
+    color: #869EAF;
+    font-size: 1.05em;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.toc {
+    max-width: 800px;
+    margin: 30px auto 50px auto;
+    background-color: #0D0D12;
+    border: 1px solid #333F6E;
+    border-radius: 8px;
+    padding: 25px 35px;
+}
+
+.toc h2 {
+    color: #DFD097;
+    margin-top: 0;
+}
+
+.toc ol {
+    color: #CECEAB;
+    line-height: 1.9;
+}
+
+.toc a {
+    color: #CECEAB;
+    text-decoration: none;
+}
+
+.toc a:hover {
+    color: #A1E197;
+    text-decoration: underline;
+}
+
+.section {
+    max-width: 1100px;
+    margin: 0 auto 60px auto;
+    padding: 0 20px;
+    scroll-margin-top: 20px;
+}
+
+.section h2 {
+    color: #FFFFFF;
+    border-left: 5px solid #A1E197;
+    padding-left: 14px;
+    font-size: 1.5em;
+    margin-bottom: 6px;
+}
+
+.section .section-desc {
+    color: #869EAF;
+    margin-bottom: 25px;
+    margin-left: 19px;
+}
+
+.subsection h3 {
+    color: #DFD097;
+    margin-top: 35px;
+    margin-bottom: 12px;
+    font-size: 1.15em;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #111111;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+th {
+    background-color: #333F6E;
+    color: #FFFFFF;
+    padding: 12px 14px;
+    text-align: center;
+    border-bottom: 2px solid #869EAF;
+    font-size: 0.92em;
+}
+
+td {
+    padding: 10px 14px;
+    text-align: center;
+    border-bottom: 1px solid #262626;
+    color: #CECEAB;
+    font-size: 0.92em;
+}
+
+tr:hover td {
+    filter: brightness(1.2);
+}
+
+.cell-low { background-color: rgba(161, 225, 151, 0.28); color: #111 !important; font-weight: 600; }
+.cell-mod { background-color: rgba(232, 213, 139, 0.45); color: #111 !important; font-weight: 600; }
+.cell-high { background-color: rgba(224, 141, 141, 0.5); color: #fff !important; font-weight: 700; }
+
+.stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    background-color: #0D0D12;
+    border: 1px solid #333F6E;
+    border-radius: 8px;
+    padding: 16px 22px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.stat-card .label {
+    color: #869EAF;
+    font-size: 0.85em;
+    margin-bottom: 6px;
+}
+
+.stat-card .value {
+    color: #DFD097;
+    font-size: 1.4em;
+    font-weight: 700;
+}
+
+.takeaway-panel {
+    background-color: #0D0D12;
+    border: 1px solid #A1E197;
+    border-radius: 8px;
+    padding: 20px 26px;
+    margin-top: 20px;
+}
+
+.takeaway-panel .title {
+    color: #A1E197;
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 1.05em;
+}
+
+.takeaway-panel ul {
+    color: #CECEAB;
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.takeaway-panel b {
+    color: #DFD097;
+}
+
+.final-summary {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 30px 20px;
+    border-top: 2px solid #333F6E;
+}
+
+.final-summary h2 {
+    color: #A1E197;
+    text-align: center;
+    border: none;
+    padding-left: 0;
+}
+
+.final-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.final-card {
+    background-color: #0D0D12;
+    border-radius: 8px;
+    padding: 20px;
+    border-top: 3px solid #A1E197;
+}
+
+.final-card.risk { border-top-color: #E08D8D; }
+.final-card.protective { border-top-color: #A1E197; }
+
+.final-card h4 {
+    color: #FFFFFF;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.final-card p {
+    color: #CECEAB;
+    font-size: 0.92em;
+    line-height: 1.6;
+    margin: 0;
+}
+
+footer {
+    text-align: center;
+    color: #869EAF;
+    padding: 30px;
+    font-size: 0.85em;
+    border-top: 1px solid #333F6E;
+}
+
+</style>
+</head>
+<body>
+
+<div class="report-header">
+    <h1>🧠 HR Burnout Risk Analysis — Master Report</h1>
+</div>
+
+
+<div class="toc">
+    <h2>Contents</h2>
+    <ol>
+        <li><a href="#data-quality">Data Quality Summary</a></li>
+        <li><a href="#workforce-overview">Workforce Overview</a></li>
+        <li><a href="#wellbeing-workload">Wellbeing &amp; Workload Indicators</a></li>
+        <li><a href="#linear-correlation">Correlation with Burnout Risk (Linear)</a></li>
+        <li><a href="#nonlinear-correlation">Nonlinear Relationship with Burnout Risk</a></li>
+        <li><a href="#profile-breakdown">Burnout Risk by Employee Profile</a></li>
+        <li><a href="#working-hours">Burnout Risk by Working Hours</a></li>
+        <li><a href="#tenure-salary">Burnout Risk by Tenure &amp; Salary</a></li>
+        <li><a href="#company-support">Burnout Risk by Company Support</a></li>
+        <li><a href="#interaction-effects">Interaction Effects</a></li>
+        <li><a href="#final-summary">Final Summary</a></li>
+    </ol>
+</div>
+
+
+<div class="section" id="data-quality">
+    <h2>1. Data Quality Summary</h2>
+    <p class="section-desc">What was found in the raw dataset, what was fixed, and what was a false alarm.</p>
+    <div class="stat-row"><div class="stat-card"><div class="label">Total Rows</div><div class="value">25,000</div></div><div class="stat-card"><div class="label">Total Columns</div><div class="value">26</div></div><div class="stat-card"><div class="label">Columns w/ Missing (pre-cleaning)</div><div class="value">10</div></div><div class="stat-card"><div class="label">Missing Rate Range</div><div class="value">0.77% – 1.68%</div></div></div>
+    <div class="subsection">
+        <h3>Missing Values — Real Issue, Resolved</h3>
+        <p style="color:#CECEAB; margin-left:4px;">
+            10 numeric columns had missing values ranging from 0.77% to 1.68% per column
+            (2,922 of 25,000 rows affected, 0.48% of all cells). The pattern was checked and found
+            to be random (MCAR) — not concentrated in any particular role, work mode, or burnout
+            risk group. Resolved via median imputation.
+        </p>
+    </div>
+    <div class="subsection">
+        <h3>Invalid Values — False Positive (No Action Needed)</h3>
+        <p style="color:#CECEAB; margin-left:4px;">
+            An automated profiling tool flagged 16,382 values in <code>presenteeism_days_per_month</code>
+            and <code>absenteeism_days_per_month</code> as "invalid" using a rule that expected values
+            between 1 and 12 (as if these were calendar months). These columns actually represent a
+            <i>count of days per month</i>, not a month number — the rule was misapplied due to the
+            <code>_per_month</code> suffix in the column name. No correction needed.
+        </p>
+    </div>
+    <div class="subsection">
+        <h3>Outliers — Mostly Expected</h3>
+        <p style="color:#CECEAB; margin-left:4px;">
+            16 of 21 numeric columns had statistical outliers flagged by IQR methods, but their
+            contribution to the overall quality penalty was minor. Columns like
+            <code>overtime_hours_per_week</code> (13.3% flagged) are naturally right-skewed —
+            some employees genuinely work far more overtime than others. Not treated as defects.
+        </p>
+    </div>
+</div>
+
+
+<div class="section" id="workforce-overview">
+    <h2>2. Workforce Overview</h2>
+    <p class="section-desc">Who the workforce is: demographics, roles, tenure, and compensation.</p>
+    <div class="stat-row"><div class="stat-card"><div class="label">Total Employees</div><div class="value">25,000</div></div><div class="stat-card"><div class="label">Age Range</div><div class="value">22–60 yrs (avg 41.0)</div></div><div class="stat-card"><div class="label">Avg Tenure</div><div class="value">9.0 yrs</div></div><div class="stat-card"><div class="label">Avg Hours/Week</div><div class="value">46.2 hrs</div></div><div class="stat-card"><div class="label">Avg Salary</div><div class="value">$8,181</div></div></div>
+    <div class="subsection">
+        <h3>Gender Distribution</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Gender</th><th>Employees</th><th>Percentage</th></tr></thead>
+        <tbody><tr><th>Male</th><td>11,900</td><td>47.6%</td></tr><tr><th>Female</th><td>11,878</td><td>47.5%</td></tr><tr><th>Non-binary</th><td>1,222</td><td>4.9%</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Role Distribution</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Role</th><th>Employees</th><th>Percentage</th></tr></thead>
+        <tbody><tr><th>Support</th><td>5,912</td><td>23.6%</td></tr><tr><th>Developer</th><td>4,588</td><td>18.4%</td></tr><tr><th>Sales</th><td>4,481</td><td>17.9%</td></tr><tr><th>Manager</th><td>4,164</td><td>16.7%</td></tr><tr><th>HR</th><td>3,795</td><td>15.2%</td></tr><tr><th>Executive</th><td>2,060</td><td>8.2%</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Work Mode Distribution</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Work Mode</th><th>Employees</th><th>Percentage</th></tr></thead>
+        <tbody><tr><th>Hybrid</th><td>9,722</td><td>38.9%</td></tr><tr><th>Remote</th><td>9,288</td><td>37.2%</td></tr><tr><th>On-site</th><td>5,990</td><td>24.0%</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Overall Burnout Risk Distribution</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Burnout Risk</th><th>Employees</th><th>Percentage</th></tr></thead>
+        <tbody><tr><th>Moderate</th><td>16,500</td><td>66.0%</td></tr><tr><th>Low</th><td>4,500</td><td>18.0%</td></tr><tr><th>High</th><td>4,000</td><td>16.0%</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+</div>
+
+
+<div class="section" id="wellbeing-workload">
+    <h2>3. Wellbeing &amp; Workload Indicators</h2>
+    <p class="section-desc">The 12 core indicators used throughout this report: scores, workload measures, and mental health benefit usage.</p>
+    <div class="subsection">
+        <h3>Wellbeing Scores — Overview</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Indicator</th><th>Min</th><th>Mean</th><th>Max</th></tr></thead>
+        <tbody><tr><th>Work-Life Balance</th><td>1.0</td><td>3.79</td><td>5.0</td></tr><tr><th>Job Satisfaction</th><td>1.0</td><td>3.78</td><td>5.0</td></tr><tr><th>Stress Level (self-report)</th><td>1.0</td><td>2.36</td><td>5.0</td></tr><tr><th>Anxiety Score</th><td>0.0</td><td>3.55</td><td>10.0</td></tr><tr><th>Depression Score</th><td>0.0</td><td>2.88</td><td>9.2</td></tr><tr><th>Sleep Quality</th><td>1.0</td><td>3.79</td><td>5.0</td></tr><tr><th>Social Support</th><td>1.0</td><td>3.27</td><td>5.0</td></tr><tr><th>Manager Support</th><td>1.0</td><td>3.42</td><td>5.0</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Workload Measures — Overview</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Indicator</th><th>Min</th><th>Mean</th><th>Max</th></tr></thead>
+        <tbody><tr><th>Commute Time (mins)</th><td>0.0</td><td>25.37</td><td>118.0</td></tr><tr><th>Absenteeism (days/month)</th><td>0.0</td><td>0.91</td><td>6.0</td></tr><tr><th>Overtime (hrs/week)</th><td>0.0</td><td>1.75</td><td>25.0</td></tr><tr><th>Workload Index</th><td>0.0</td><td>3.85</td><td>10.0</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Mental Health Benefit Utilization</h3>
+        
+<div class="table-container">
+<table>
+    <thead><tr><th>Status</th><th>Employees</th><th>Percentage</th></tr></thead>
+    <tbody><tr><th>Not Utilized</th><td>19,033</td><td>76.1%</td></tr><tr><th>Utilized</th><td>5,967</td><td>23.9%</td></tr></tbody>
+</table>
+</div>
+
+    </div>
+    <div class="subsection">
+        <h3>Wellbeing Scores by Benefit Utilization</h3>
+        <p style="color:#CECEAB; margin-left:4px; font-size:0.9em;">
+            Employees who used the mental health benefit report higher stress/anxiety on average —
+            consistent with people seeking support <i>because</i> they are struggling, not the benefit
+            causing harm.
+        </p>
+        
+<div class="table-container">
+<table>
+    <thead><tr><th>Indicator</th><th>Not Utilized</th><th>Utilized</th><th>Difference</th></tr></thead>
+    <tbody><tr><th>Work-Life Balance</th><td>3.82</td><td>3.73</td><td class='cell-low'>-0.09</td></tr><tr><th>Job Satisfaction</th><td>3.80</td><td>3.74</td><td class='cell-low'>-0.06</td></tr><tr><th>Stress Level (self-report)</th><td>2.27</td><td>2.66</td><td class='cell-high'>+0.38</td></tr><tr><th>Anxiety Score</th><td>3.49</td><td>3.77</td><td class='cell-high'>+0.29</td></tr><tr><th>Depression Score</th><td>2.83</td><td>3.06</td><td class='cell-high'>+0.23</td></tr><tr><th>Sleep Quality</th><td>3.81</td><td>3.73</td><td class='cell-low'>-0.08</td></tr><tr><th>Social Support</th><td>3.28</td><td>3.24</td><td class='cell-low'>-0.04</td></tr><tr><th>Manager Support</th><td>3.42</td><td>3.42</td><td class='cell-low'>-0.01</td></tr><tr><th>Workload Index</th><td>3.80</td><td>4.02</td><td class='cell-high'>+0.22</td></tr></tbody>
+</table>
+</div>
+
+    </div>
+</div>
+
+
+<div class="section" id="linear-correlation">
+    <h2>4. Correlation with Burnout Risk (Linear)</h2>
+    <p class="section-desc">Pearson correlation between every numeric factor and an ordered burnout_risk scale (Low=0, Moderate=1, High=2).</p>
+    
+<div class="table-container">
+<table>
+    <thead><tr><th>Factor</th><th>Correlation</th><th>Strength</th></tr></thead>
+    <tbody><tr><th>Stress Level (self-report)</th><td>+0.480</td><td>Strong</td></tr><tr><th>Workload Index</th><td>+0.439</td><td>Strong</td></tr><tr><th>Hours Worked per Week</th><td>+0.406</td><td>Strong</td></tr><tr><th>Overtime (hrs/week)</th><td>+0.288</td><td>Moderate</td></tr><tr><th>Anxiety Score</th><td>+0.242</td><td>Moderate</td></tr><tr><th>Depression Score</th><td>+0.143</td><td>Weak</td></tr><tr><th>Monthly Salary</th><td>+0.109</td><td>Weak</td></tr><tr><th>Commute Time</th><td>+0.104</td><td>Weak</td></tr><tr><th>Presenteeism (days/month)</th><td>+0.100</td><td>Weak</td></tr><tr><th>Mental Health Benefit Used</th><td>+0.100</td><td>Negligible</td></tr><tr><th>Left Company Last Year</th><td>+0.099</td><td>Negligible</td></tr><tr><th>Absenteeism (days/month)</th><td>+0.066</td><td>Negligible</td></tr><tr><th>Years in Company</th><td>+0.039</td><td>Negligible</td></tr><tr><th>Years Since Last Promotion</th><td>+0.031</td><td>Negligible</td></tr><tr><th>Age</th><td>+0.015</td><td>Negligible</td></tr><tr><th>Social Support</th><td>-0.022</td><td>Negligible</td></tr><tr><th>Vacation Days Taken</th><td>-0.050</td><td>Negligible</td></tr><tr><th>Manager Support</th><td>-0.086</td><td>Negligible</td></tr><tr><th>Job Satisfaction</th><td>-0.143</td><td>Weak</td></tr><tr><th>Sleep Quality</th><td>-0.234</td><td>Moderate</td></tr><tr><th>Work-Life Balance</th><td>-0.310</td><td>Moderate</td></tr></tbody>
+</table>
+</div>
+
+    <div class="takeaway-panel">
+        <div class="title">Key Takeaways</div>
+        <ul>
+            <li><b>Strongest Risk Factor:</b> Stress Level (self-report) (+0.480)</li>
+            <li><b>Strongest Protective Factor:</b> Work-Life Balance (-0.310)</li>
+            <li><b>Top 3 Risk Drivers:</b> Stress Level (self-report), Workload Index, Hours Worked per Week</li>
+            <li><b>Top 3 Protective Factors:</b> Job Satisfaction, Sleep Quality, Work-Life Balance</li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="section" id="nonlinear-correlation">
+    <h2>5. Nonlinear Relationship with Burnout Risk</h2>
+    <p class="section-desc">Mutual Information scores capture non-linear associations that Pearson correlation can miss.</p>
+    
+<div class="table-container">
+<table>
+    <thead><tr><th>Factor</th><th>Mutual Information</th><th>Nonlinear Association</th></tr></thead>
+    <tbody><tr><th>Stress Level (self-report)</th><td>0.135</td><td>Weak</td></tr><tr><th>Workload Index</th><td>0.110</td><td>Weak</td></tr><tr><th>Hours Worked per Week</th><td>0.088</td><td>Negligible</td></tr><tr><th>Work-Life Balance</th><td>0.049</td><td>Negligible</td></tr><tr><th>Overtime (hrs/week)</th><td>0.047</td><td>Negligible</td></tr><tr><th>Anxiety Score</th><td>0.037</td><td>Negligible</td></tr><tr><th>Sleep Quality</th><td>0.027</td><td>Negligible</td></tr><tr><th>Depression Score</th><td>0.012</td><td>Negligible</td></tr><tr><th>Manager Support</th><td>0.010</td><td>Negligible</td></tr><tr><th>Job Satisfaction</th><td>0.010</td><td>Negligible</td></tr><tr><th>Monthly Salary</th><td>0.006</td><td>Negligible</td></tr><tr><th>Social Support</th><td>0.006</td><td>Negligible</td></tr><tr><th>Mental Health Benefit Used</th><td>0.006</td><td>Negligible</td></tr><tr><th>Commute Time</th><td>0.006</td><td>Negligible</td></tr><tr><th>Years in Company</th><td>0.003</td><td>Negligible</td></tr><tr><th>Left Company Last Year</th><td>0.003</td><td>Negligible</td></tr><tr><th>Years Since Last Promotion</th><td>0.002</td><td>Negligible</td></tr><tr><th>Absenteeism (days/month)</th><td>0.001</td><td>Negligible</td></tr><tr><th>Presenteeism (days/month)</th><td>0.001</td><td>Negligible</td></tr><tr><th>Age</th><td>0.000</td><td>Negligible</td></tr><tr><th>Vacation Days Taken</th><td>0.000</td><td>Negligible</td></tr></tbody>
+</table>
+</div>
+
+    <div class="takeaway-panel">
+        <div class="title">Key Takeaway</div>
+        <ul>
+            <li>No strong non-linear relationships were found beyond what linear correlation already showed.
+            The top non-linear drivers (<b>Stress Level (self-report)</b>,
+            <b>Workload Index</b>,
+            <b>Hours Worked per Week</b>) match the top linear drivers,
+            meaning simple linear relationships explain most of the pattern.</li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="section" id="profile-breakdown">
+    <h2>6. Burnout Risk by Employee Profile</h2>
+    <p class="section-desc">Burnout risk distribution across role, gender, and work mode.</p>
+    <div class="subsection">
+        <h3>By Role</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Role</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Developer</th><td>4,588</td><td class="cell-low">16.5%</td><td class="cell-mod">67.0%</td><td class="cell-high">16.6%</td></tr>
+<tr><th>Executive</th><td>2,060</td><td class="cell-low">10.5%</td><td class="cell-mod">63.8%</td><td class="cell-high">25.7%</td></tr>
+<tr><th>HR</th><td>3,795</td><td class="cell-low">23.1%</td><td class="cell-mod">65.5%</td><td class="cell-high">11.3%</td></tr>
+<tr><th>Manager</th><td>4,164</td><td class="cell-low">12.6%</td><td class="cell-mod">67.1%</td><td class="cell-high">20.3%</td></tr>
+<tr><th>Sales</th><td>4,481</td><td class="cell-low">17.9%</td><td class="cell-mod">66.6%</td><td class="cell-high">15.5%</td></tr>
+<tr><th>Support</th><td>5,912</td><td class="cell-low">22.4%</td><td class="cell-mod">65.1%</td><td class="cell-high">12.5%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>By Gender</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Gender</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Female</th><td>11,878</td><td class="cell-low">18.0%</td><td class="cell-mod">66.2%</td><td class="cell-high">15.8%</td></tr>
+<tr><th>Male</th><td>11,900</td><td class="cell-low">17.8%</td><td class="cell-mod">65.9%</td><td class="cell-high">16.2%</td></tr>
+<tr><th>Non-binary</th><td>1,222</td><td class="cell-low">19.1%</td><td class="cell-mod">65.0%</td><td class="cell-high">15.9%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>By Work Mode</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Work Mode</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Hybrid</th><td>9,722</td><td class="cell-low">16.5%</td><td class="cell-mod">66.3%</td><td class="cell-high">17.2%</td></tr>
+<tr><th>On-site</th><td>5,990</td><td class="cell-low">13.3%</td><td class="cell-mod">66.0%</td><td class="cell-high">20.7%</td></tr>
+<tr><th>Remote</th><td>9,288</td><td class="cell-low">22.6%</td><td class="cell-mod">65.7%</td><td class="cell-high">11.7%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+</div>
+
+
+<div class="section" id="working-hours">
+    <h2>7. Burnout Risk by Working Hours</h2>
+    <p class="section-desc">Burnout risk distribution across weekly working-hour groups — one of the clearest patterns in this dataset.</p>
+    
+<div class="table-container">
+<table>
+    <thead><tr><th>Hours Group</th><th>Employees</th><th>Avg Hours</th><th>Low</th><th>Moderate</th><th>High</th></tr></thead>
+    <tbody><tr><th>30-39</th><td>3,033</td><td>37.2</td><td class="cell-low">43.5%</td><td class="cell-mod">54.2%</td><td class="cell-high">2.3%</td></tr><tr><th>40-49</th><td>15,100</td><td>44.9</td><td class="cell-low">18.8%</td><td class="cell-mod">69.8%</td><td class="cell-high">11.4%</td></tr><tr><th>50-59</th><td>6,673</td><td>52.7</td><td class="cell-low">5.1%</td><td class="cell-mod">63.4%</td><td class="cell-high">31.5%</td></tr><tr><th>60+</th><td>194</td><td>61.5</td><td class="cell-low">0.0%</td><td class="cell-mod">42.3%</td><td class="cell-high">57.7%</td></tr></tbody>
+</table>
+</div>
+
+    <div class="takeaway-panel">
+        <div class="title">Key Takeaway</div>
+        <ul>
+            <li>High-risk burnout jumps from <b>2.3%</b> at 30-39 hrs/week to <b>57.7%</b> at 60+ hrs/week —
+            roughly a 25x increase, and the single clearest pattern in the whole dataset.</li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="section" id="tenure-salary">
+    <h2>8. Burnout Risk by Tenure &amp; Salary</h2>
+    <p class="section-desc">Burnout risk distribution across employee tenure and monthly salary groups.</p>
+    <div class="subsection">
+        <h3>By Years in Company</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Tenure</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>0–2 years</th><td>1,598</td><td class="cell-low">19.3%</td><td class="cell-mod">66.1%</td><td class="cell-high">14.6%</td></tr>
+<tr><th>3–5 years</th><td>5,993</td><td class="cell-low">18.9%</td><td class="cell-mod">66.2%</td><td class="cell-high">14.9%</td></tr>
+<tr><th>6–8 years</th><td>6,245</td><td class="cell-low">18.7%</td><td class="cell-mod">65.7%</td><td class="cell-high">15.6%</td></tr>
+<tr><th>9–11 years</th><td>4,481</td><td class="cell-low">18.0%</td><td class="cell-mod">65.2%</td><td class="cell-high">16.8%</td></tr>
+<tr><th>12–14 years</th><td>3,001</td><td class="cell-low">16.6%</td><td class="cell-mod">67.5%</td><td class="cell-high">15.9%</td></tr>
+<tr><th>15+ years</th><td>3,682</td><td class="cell-low">15.9%</td><td class="cell-mod">65.9%</td><td class="cell-high">18.1%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>By Monthly Salary (Quintiles)</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Salary Group</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>(2499.999, 6150.0]</th><td>5,162</td><td class="cell-low">22.5%</td><td class="cell-mod">65.3%</td><td class="cell-high">12.3%</td></tr>
+<tr><th>(6150.0, 7400.0]</th><td>4,974</td><td class="cell-low">19.9%</td><td class="cell-mod">66.2%</td><td class="cell-high">13.8%</td></tr>
+<tr><th>(7400.0, 8550.0]</th><td>5,060</td><td class="cell-low">17.9%</td><td class="cell-mod">66.0%</td><td class="cell-high">16.0%</td></tr>
+<tr><th>(8550.0, 10100.0]</th><td>4,862</td><td class="cell-low">16.6%</td><td class="cell-mod">66.4%</td><td class="cell-high">17.0%</td></tr>
+<tr><th>(10100.0, 19450.0]</th><td>4,942</td><td class="cell-low">12.8%</td><td class="cell-mod">66.1%</td><td class="cell-high">21.1%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+</div>
+
+
+<div class="section" id="company-support">
+    <h2>9. Burnout Risk by Company Support</h2>
+    <p class="section-desc">Burnout risk distribution by employee turnover and mental health benefit utilization.</p>
+    <div class="subsection">
+        <h3>By Employee Turnover (left_company_last_year)</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Left Last Year</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>0</th><td>22,040</td><td class="cell-low">18.9%</td><td class="cell-mod">66.4%</td><td class="cell-high">14.8%</td></tr>
+<tr><th>1</th><td>2,960</td><td class="cell-low">11.6%</td><td class="cell-mod">63.1%</td><td class="cell-high">25.3%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>By Mental Health Benefit Usage</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Benefit Used</th><th>Employees</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>0</th><td>19,033</td><td class="cell-low">19.6%</td><td class="cell-mod">66.1%</td><td class="cell-high">14.3%</td></tr>
+<tr><th>1</th><td>5,967</td><td class="cell-low">13.0%</td><td class="cell-mod">65.6%</td><td class="cell-high">21.4%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+</div>
+
+
+<div class="section" id="interaction-effects">
+    <h2>10. Interaction Effects</h2>
+    <p class="section-desc">Single-factor averages can hide how much worse things get when risk factors stack together. These four combinations reveal where risk concentrates.</p>
+    <div class="subsection">
+        <h3>Role × Hours Worked/Week (% High Risk)</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Role</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60+</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Developer</th><td class="cell-low">2.2%</td><td class="cell-low">11.5%</td><td class="cell-high">31.6%</td><td class="cell-high">42.3%</td></tr>
+<tr><th>Executive</th><td class="cell-low">7.7%</td><td class="cell-low">13.7%</td><td class="cell-high">34.1%</td><td class="cell-high">54.9%</td></tr>
+<tr><th>HR</th><td class="cell-low">3.3%</td><td class="cell-low">11.0%</td><td class="cell-mod">26.2%</td><td class="cell-high">66.7%</td></tr>
+<tr><th>Manager</th><td class="cell-low">1.0%</td><td class="cell-low">12.2%</td><td class="cell-high">32.1%</td><td class="cell-high">73.8%</td></tr>
+<tr><th>Sales</th><td class="cell-low">1.2%</td><td class="cell-low">11.8%</td><td class="cell-high">31.0%</td><td class="cell-high">62.5%</td></tr>
+<tr><th>Support</th><td class="cell-low">2.1%</td><td class="cell-low">10.1%</td><td class="cell-high">30.9%</td><td class="cell-mod">29.4%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Work Mode × Overtime (% High Risk)</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Work Mode</th><th>0-5</th><th>6-10</th><th>11-15</th><th>16+</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Hybrid</th><td class="cell-low">13.2%</td><td class="cell-high">35.2%</td><td class="cell-high">48.7%</td><td class="cell-high">69.4%</td></tr>
+<tr><th>On-site</th><td class="cell-mod">16.8%</td><td class="cell-high">38.8%</td><td class="cell-high">56.7%</td><td class="cell-high">63.3%</td></tr>
+<tr><th>Remote</th><td class="cell-low">9.1%</td><td class="cell-mod">27.5%</td><td class="cell-high">34.9%</td><td class="cell-high">65.3%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Manager Support × Workload Index (% High Risk)</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Manager Support</th><th>Low (0-3)</th><th>Mid-Low (3-5)</th><th>Mid-High (5-7)</th><th>High (7+)</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Low</th><td class="cell-low">9.2%</td><td class="cell-mod">23.8%</td><td class="cell-high">47.9%</td><td class="cell-high">87.5%</td></tr>
+<tr><th>Mid</th><td class="cell-low">4.7%</td><td class="cell-mod">16.3%</td><td class="cell-high">39.5%</td><td class="cell-high">66.7%</td></tr>
+<tr><th>Good</th><td class="cell-low">3.0%</td><td class="cell-low">14.0%</td><td class="cell-high">38.3%</td><td class="cell-high">72.1%</td></tr>
+<tr><th>High</th><td class="cell-low">2.3%</td><td class="cell-low">11.5%</td><td class="cell-high">34.0%</td><td class="cell-high">70.7%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="subsection">
+        <h3>Role × Manager Support (% High Risk)</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Role</th><th>Low</th><th>Mid</th><th>Good</th><th>High</th></tr>
+        </thead>
+        <tbody>
+            <tr><th>Developer</th><td class="cell-mod">23.0%</td><td class="cell-mod">18.7%</td><td class="cell-mod">16.1%</td><td class="cell-low">14.7%</td></tr>
+<tr><th>Executive</th><td class="cell-high">35.6%</td><td class="cell-mod">27.8%</td><td class="cell-mod">25.9%</td><td class="cell-mod">22.3%</td></tr>
+<tr><th>HR</th><td class="cell-mod">22.1%</td><td class="cell-low">14.1%</td><td class="cell-low">10.5%</td><td class="cell-low">9.0%</td></tr>
+<tr><th>Manager</th><td class="cell-high">37.0%</td><td class="cell-mod">22.1%</td><td class="cell-mod">20.4%</td><td class="cell-mod">16.5%</td></tr>
+<tr><th>Sales</th><td class="cell-mod">22.9%</td><td class="cell-mod">17.3%</td><td class="cell-mod">15.6%</td><td class="cell-low">13.2%</td></tr>
+<tr><th>Support</th><td class="cell-mod">21.0%</td><td class="cell-low">14.8%</td><td class="cell-low">12.1%</td><td class="cell-low">10.2%</td></tr>
+
+        </tbody>
+    </table>
+    </div>
+    
+    </div>
+    <div class="takeaway-panel">
+        <div class="title">Highest-Risk Combinations Found</div>
+        <ul>
+            <li><b>Role × Hours:</b> Role = Manager, Hours = 60+ (73.8%)</li>
+            <li><b>Work Mode × Overtime:</b> Mode = Hybrid, Overtime = 16+ (69.4%)</li>
+            <li><b>Manager Support × Workload:</b> Support = Low, Workload = High (7+) (87.5%)</li>
+            <li><b>Role × Manager Support:</b> Role = Manager, Support = Low (37.0%)</li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="final-summary" id="final-summary">
+    <h2>11. Final Summary — What Drives Burnout Here</h2>
+    <div class="final-grid">
+        <div class="final-card risk">
+            <h4>🔴 Strongest Risk Drivers</h4>
+            <p>Stress level, workload index, and hours worked per week show the strongest positive
+            correlation with burnout risk. High-risk burnout jumps from 2.3% at 30-39 hrs/week to
+            57.7% at 60+ hrs/week.</p>
+        </div>
+        <div class="final-card protective">
+            <h4>🟢 Strongest Protective Factors</h4>
+            <p>Work-life balance and sleep quality show the strongest negative correlation —
+            higher scores on these consistently mean lower burnout risk.</p>
+        </div>
+        <div class="final-card risk">
+            <h4>🔴 Worst Combination Found</h4>
+            <p>Low manager support + high workload index together produce an 87.5% high-risk rate —
+            far worse than either factor alone would suggest.</p>
+        </div>
+        <div class="final-card protective">
+            <h4>🟢 Manager Support is a Real Buffer</h4>
+            <p>Even under high workload, employees with high manager support have a meaningfully
+            lower high-risk rate (70.7%) than those with low support (87.5%) — especially for
+            Manager and Executive roles.</p>
+        </div>
+        <div class="final-card risk">
+            <h4>🔴 Role Sensitivity Differs</h4>
+            <p>At 60+ hrs/week, Managers reach 73.8% high-risk while Support staff stay at 29.4% —
+            the same hours affect different roles very differently.</p>
+        </div>
+        <div class="final-card">
+            <h4>⚪ No Major Non-Linear Surprises</h4>
+            <p>Mutual information analysis confirms the top non-linear drivers match the top linear
+            drivers — the relationships in this dataset are mostly straightforward and monotonic.</p>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+</footer>
+
+</body>
+</html>
