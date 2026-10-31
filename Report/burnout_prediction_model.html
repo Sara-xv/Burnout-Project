@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Burnout Risk Prediction Model</title>
+<style>
+body { background-color: #000000; color: #FFFFFF; font-family: 'Segoe UI', Arial, sans-serif; margin:0; padding:0; }
+.report-header { text-align:center; padding:50px 20px 30px 20px; border-bottom:2px solid #333F6E; }
+.report-header h1 { color:#A1E197; font-size:2.0em; }
+.section { max-width:1100px; margin:0 auto 60px auto; padding:0 20px; }
+.section h2 { color:#FFFFFF; border-left:5px solid #A1E197; padding-left:14px; font-size:1.4em; }
+.section .section-desc { color:#869EAF; margin-bottom:20px; margin-left:19px; }
+.subsection h3 { color:#DFD097; margin-top:30px; margin-bottom:10px; font-size:1.1em; }
+.table-container { overflow-x:auto; margin-bottom:15px; }
+table { width:100%; border-collapse:collapse; background-color:#111111; border-radius:6px; overflow:hidden; }
+th { background-color:#333F6E; color:#FFFFFF; padding:12px 14px; text-align:center; border-bottom:2px solid #869EAF; font-size:0.92em; }
+td { padding:10px 14px; text-align:center; border-bottom:1px solid #262626; color:#CECEAB; font-size:0.92em; }
+tr:hover td { filter:brightness(1.2); }
+.stat-row { display:flex; flex-wrap:wrap; gap:16px; margin-bottom:15px; }
+.stat-card { background-color:#0D0D12; border:1px solid #333F6E; border-radius:8px; padding:16px 22px; flex:1; min-width:160px; }
+.stat-card .label { color:#869EAF; font-size:0.85em; margin-bottom:6px; }
+.stat-card .value { color:#DFD097; font-size:1.4em; font-weight:700; }
+.takeaway-panel { background-color:#0D0D12; border:1px solid #A1E197; border-radius:8px; padding:20px 26px; margin-top:20px; }
+.takeaway-panel .title { color:#A1E197; font-weight:700; margin-bottom:10px; }
+.takeaway-panel ul { color:#CECEAB; margin:0; padding-left:20px; line-height:1.8; }
+.takeaway-panel b { color:#DFD097; }
+footer { text-align:center; color:#869EAF; padding:30px; font-size:0.85em; border-top:1px solid #333F6E; }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+    <h1>🤖 Burnout Risk Prediction Model</h1>
+</div>
+
+
+<div class="section" id="prediction-model">
+    <h2>Burnout Risk Prediction Model</h2>
+    <p class="section-desc">A Random Forest classifier trained to predict burnout_risk (Low / Moderate / High) from the rest of the dataset.</p>
+    <div class="stat-row"><div class="stat-card"><div class="label">Model</div><div class="value">Random Forest (200 trees)</div></div><div class="stat-card"><div class="label">Train / Test Split</div><div class="value">80% / 20%</div></div><div class="stat-card"><div class="label">Overall Accuracy (default)</div><div class="value">70.8%</div></div><div class="stat-card"><div class="label">Overall Accuracy (custom thresholds)</div><div class="value">65.3%</div></div></div>
+
+    <div class="subsection">
+        <h3>Why Custom Thresholds Were Needed</h3>
+        <p style="color:#CECEAB; margin-left:4px;">
+            burnout_risk is imbalanced (Moderate=66%, Low=18%, High=16%). With default predictions,
+            the model correctly identifies only 26% of real
+            High-risk employees — it defaults to predicting "Moderate" too often. Missing a real
+            High-risk employee is costlier than a false alarm, so custom decision thresholds were
+            applied: an employee is flagged High if P(High) exceeds a threshold, even when it isn't
+            the single most likely class.
+        </p>
+    </div>
+
+    <div class="subsection">
+        <h3>Role-Based Thresholds</h3>
+        <p style="color:#CECEAB; margin-left:4px;">
+            Manager and Executive roles have the highest actual High-risk rates in this dataset
+            (25.7% and 20.3% respectively, vs 11-17% for other roles — see earlier EDA), so they use
+            a more sensitive threshold (P(High) ≥ 0.2) than other roles
+            (P(High) ≥ 0.25).
+        </p>
+    </div>
+
+    <div class="subsection">
+        <h3>Model Performance — Default Predictions</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1-score</th><th>Support</th></tr></thead>
+        <tbody><tr><th>Low</th><td>0.67</td><td>0.24</td><td>0.36</td><td>900</td></tr><tr><th>Moderate</th><td>0.71</td><td>0.94</td><td>0.81</td><td>3300</td></tr><tr><th>High</th><td>0.72</td><td>0.26</td><td>0.38</td><td>800</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+
+    <div class="subsection">
+        <h3>Model Performance — Role-Based Custom Thresholds</h3>
+        
+    <div class="table-container">
+    <table>
+        <thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1-score</th><th>Support</th></tr></thead>
+        <tbody><tr><th>Low</th><td>0.53</td><td>0.58</td><td>0.55</td><td>900</td></tr><tr><th>Moderate</th><td>0.78</td><td>0.67</td><td>0.72</td><td>3300</td></tr><tr><th>High</th><td>0.46</td><td>0.68</td><td>0.55</td><td>800</td></tr></tbody>
+    </table>
+    </div>
+    
+    </div>
+
+    <div class="subsection">
+        <h3>Top 15 Most Important Features</h3>
+        
+<div class="table-container">
+<table>
+    <thead><tr><th>Feature</th><th>Importance</th></tr></thead>
+    <tbody><tr><th>Stress Level (self-report)</th><td>0.138</td></tr><tr><th>Workload Index</th><td>0.110</td></tr><tr><th>Hours Worked per Week</th><td>0.096</td></tr><tr><th>Work-Life Balance</th><td>0.064</td></tr><tr><th>Anxiety Score</th><td>0.055</td></tr><tr><th>Sleep Quality</th><td>0.047</td></tr><tr><th>Monthly Salary</th><td>0.043</td></tr><tr><th>Depression Score</th><td>0.042</td></tr><tr><th>Manager Support</th><td>0.041</td></tr><tr><th>Overtime (hrs/week)</th><td>0.040</td></tr><tr><th>Age</th><td>0.038</td></tr><tr><th>Social Support</th><td>0.037</td></tr><tr><th>Job Satisfaction</th><td>0.037</td></tr><tr><th>Vacation Days Taken</th><td>0.034</td></tr><tr><th>Years in Company</th><td>0.032</td></tr></tbody>
+</table>
+</div>
+
+    </div>
+
+    <div class="takeaway-panel">
+        <div class="title">Key Takeaways</div>
+        <ul>
+            <li><b>High-risk recall improved from 26% to 68%</b>
+            by using custom thresholds instead of default predictions — at a small cost to overall accuracy
+            (70.8% → 65.3%).</li>
+            <li><b>Top feature:</b> Stress Level (self-report)
+            (importance 0.138)</li>
+            <li>Feature importance from this model can be compared against the earlier correlation
+            analysis to confirm which factors matter most for burnout risk.</li>
+        </ul>
+    </div>
+</div>
+
+
+<footer></footer>
+
+</body>
+</html>
