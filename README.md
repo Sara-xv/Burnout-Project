@@ -18,9 +18,15 @@ This project walks through a full data analytics pipeline:
 
 ---
 
-## 🧠 The Prediction Model
+## 📊 Key EDA Insight — Wellbeing Scores by Benefit Utilization
 
-![Burnout Prediction Model Report](Picture/Report.png)
+![Wellbeing Scores by Benefit Utilization](Picture/Report.png)
+
+Employees who used the mental health benefit report *higher* average stress and anxiety than those who didn't. This is **not** evidence that the benefit causes harm — it's more consistent with employees seeking support *because* they are already struggling (reverse causation), rather than the benefit itself increasing stress.
+
+---
+
+## 🧠 The Prediction Model
 
 | | |
 |---|---|
@@ -161,4 +167,6 @@ This will open the app in your browser, where you can input employee data and ge
 **Sara Fekri**
 Data Analyst & Business Analyst | HR Analytics
 
+🔗 LinkedIn: [Add your LinkedIn URL here]
+📊 Content brand: [@sorenix.data](https://instagram.com/sorenix.data)
 💻 GitHub: [Sara-xv](https://github.com/Sara-xv)
