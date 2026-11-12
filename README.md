@@ -92,7 +92,7 @@ Burnout-Project/
 ├── Classes/                              # Supporting Python classes/modules
 ├── Dataset/                              # Employee dataset used for the project
 ├── Read this before doing anything/      # Setup notes
-├── Report/                               # Generated analysis report(s)
+├── Report/                               # Generated analysis reports
 ├── Burnout prediction model.py           # Trains the Random Forest model
 ├── streamlit_app.py                      # Interactive Streamlit app
 ├── Full Report.py                        # Generates the full HTML analysis report
@@ -159,14 +159,3 @@ This will open the app in your browser, where you can input employee data and ge
 - **Streamlit** — interactive web app
 - **Power BI** — dashboard and visual analytics
 - **Jupyter Notebook** — data cleaning and EDA
-
----
-
-## 👩‍💻 Author
-
-**Sara Fekri**
-Data Analyst & Business Analyst | HR Analytics
-
-🔗 LinkedIn: [Add your LinkedIn URL here]
-📊 Content brand: [@sorenix.data](https://instagram.com/sorenix.data)
-💻 GitHub: [Sara-xv](https://github.com/Sara-xv)
