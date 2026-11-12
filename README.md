@@ -6,7 +6,7 @@ A Random Forest classifier that predicts employee **burnout risk** (Low / Modera
 
 ## 📌 Overview
 
-![What is Burnout](picture/what%20is%20burnout.png)
+![What is Burnout](Picture/what%20is%20burnout.png)
 
 This project walks through a full data analytics pipeline:
 
@@ -20,7 +20,7 @@ This project walks through a full data analytics pipeline:
 
 ## 🧠 The Prediction Model
 
-![Burnout Prediction Model Report](picture/Report.png)
+![Burnout Prediction Model Report](Picture/Report.png)
 
 | | |
 |---|---|
@@ -131,11 +131,11 @@ This will open the app in your browser, where you can input employee data and ge
 
 **App — input screen:**
 
-![Streamlit App](picture/app.png)
+![Streamlit App](Picture/app.png)
 
 **App — prediction result:**
 
-![Streamlit App Result](picture/app(reasult).png)
+![Streamlit App Result](Picture/app(reasult).png)
 
 ---
 
@@ -143,7 +143,7 @@ This will open the app in your browser, where you can input employee data and ge
 
 `Dashboard.pbix` contains a Power BI dashboard built on the same dataset, summarizing HR analytics insights such as burnout distribution by role, department, and key risk drivers. Open it with **Power BI Desktop**.
 
-![Power BI Dashboard](picture/Dashboard.png)
+![Power BI Dashboard](Picture/Dashboard.png)
 
 ---
 
